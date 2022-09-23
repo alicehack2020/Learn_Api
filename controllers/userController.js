@@ -32,7 +32,12 @@ class UserController{
                     })
 
                     await doc.save()
-                    res.send({"status":"success","message":"registration successfully"})
+                    const user=await UserModel.findOne({email:email})
+                    const token=Jwt.sign({userID:user._id},
+                      process.env.JWT_SECRET_KEY,{expiresIn:"5d"})
+
+
+                    res.send({"status":"success","message":"registration successfully","token":token})
 
 
                    } catch (error) {
@@ -62,7 +67,11 @@ class UserController{
           const isMatch=await bcrypt.compare(password,user.password)
           if(isMatch && (email===user.email))
           {
-            res.send({"status":"success","message":"login success"})
+             //const user=await UserModel.findOne({email:email})
+              const token=Jwt.sign({userID:user._id},
+              process.env.JWT_SECRET_KEY,{expiresIn:"5d"})
+
+            res.send({"status":"success","message":"login success","token":token})
 
           }
           else{
