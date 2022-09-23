@@ -4,6 +4,7 @@ import Jwt  from "jsonwebtoken";
 
 class UserController{
    
+  //register
     static userRegistration=async(req,res)=>{
         const {name,email,password,password_confirmation,tc}=req.body;
         
@@ -47,6 +48,37 @@ class UserController{
             }
         }
 
+    }
+
+
+    //login
+    static userLogin=async(req,res)=>{
+      const {email,password}=req.body;
+      if(email&&password)
+      {
+        const user=await UserModel.findOne({email:email})
+        if(user!=null)
+        {
+          const isMatch=await bcrypt.compare(password,user.password)
+          if(isMatch && (email===user.email))
+          {
+            res.send({"status":"success","message":"login success"})
+
+          }
+          else{
+            res.send({"status":"failed","message":"email or password incorrect"})
+ 
+          }
+
+        }
+        else{
+          res.send({"status":"failed","message":"please register"})
+
+        }
+      }
+      else{
+        res.send({"status":"failed","message":"all field are required"})
+      }
     }
 }
 
